@@ -19,8 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{F7E166BF-36D5-49DE-B8E9-0E2FB0CDF7FE}</ProjectGuid>
-    <RootNamespace>Blackguard</RootNamespace>
+    <ProjectGuid>{0946DBE2-5A42-4368-94F9-E40DA5385EB9}</ProjectGuid>
+    <RootNamespace>Project1</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -68,21 +68,13 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>D:\libtcod\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\libtcod\lib;$(LibraryPath)</LibraryPath>
-    <SourcePath>D:\libtcod\src;$(SourcePath)</SourcePath>
-  </PropertyGroup>
+  <PropertyGroup />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
     </ClCompile>
-    <Link>
-      <AdditionalLibraryDirectories>D:\libtcod;D:\libtcod\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libtcod-VS.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -118,24 +110,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Ai.cpp" />
-    <ClCompile Include="Attacker.cpp" />
-    <ClCompile Include="Destructible.cpp" />
-    <ClCompile Include="Engine.cpp" />
-    <ClCompile Include="Gui.cpp" />
-    <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Map.cpp" />
-    <ClCompile Include="Actor.cpp" />
+    <ClInclude Include="c1.h" />
+    <ClInclude Include="c2.h" />
+    <ClInclude Include="Main.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Actor.h" />
-    <ClInclude Include="Ai.h" />
-    <ClInclude Include="Attacker.h" />
-    <ClInclude Include="Destructible.h" />
-    <ClInclude Include="Engine.h" />
-    <ClInclude Include="Gui.h" />
-    <ClInclude Include="Main.h" />
-    <ClInclude Include="Map.h" />
+    <ClCompile Include="c1.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
