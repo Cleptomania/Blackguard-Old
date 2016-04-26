@@ -114,10 +114,25 @@ void Map::addMonster(int x, int y) {
 }
 
 void Map::addItem(int x, int y) {
-	Actor *healthPotion = new Actor(x, y, '!', "health potion", TCODColor::yellow);
-	healthPotion->blocks = false;
-	healthPotion->pickable = new Healer(4);
-	engine.actors.push(healthPotion);
+	TCODRandom *rng = TCODRandom::getInstance();
+	int dice = rng->getInt(0, 100);
+	if (dice < 70) {
+		Actor *healthPotion = new Actor(x, y, '!', "health potion", TCODColor::yellow);
+		healthPotion->blocks = false;
+		healthPotion->pickable = new Healer(4);
+		engine.actors.push(healthPotion);
+	} else if (dice < 70+10) {
+		Actor *scrollOfLightningBolt = new Actor(x, y, '#', "scroll of lightning bolt", TCODColor::lightYellow);
+		scrollOfLightningBolt->blocks = false;
+		scrollOfLightningBolt->pickable = new LightningBolt(5, 20);
+		engine.actors.push(scrollOfLightningBolt);
+	} else if (dice < 70+10+10) {
+		Actor *scrollOfFireball = new Actor(x, y, '#', "scroll of fireball", TCODColor::lightYellow);
+		scrollOfFireball->blocks = false;
+		scrollOfFireball->pickable = new Fireball(3, 12);
+		engine.actors.push(scrollOfFireball);
+	}
+	
 }
 
 bool Map::isWall(int x, int y) const {
