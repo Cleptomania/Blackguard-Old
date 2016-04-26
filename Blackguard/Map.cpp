@@ -5,6 +5,8 @@ static const int ROOM_MIN_SIZE = 6;
 
 static const int MAX_ROOM_MONSTERS = 3;
 
+static const int MAX_ROOM_ITEMS = 2;
+
 class BspListener : public ITCODBspCallback {
 private:
 	Map &map;
@@ -81,6 +83,16 @@ void Map::createRoom(bool first, int x1, int y1, int x2, int y2) {
 			}
 			nbMonsters--;
 		}
+
+		int nbItems = rng->getInt(0, MAX_ROOM_ITEMS);
+		while (nbItems > 0) {
+			int x = rng->getInt(x1, x2);
+			int y = rng->getInt(y1, y2);
+			if (canWalk(x, y)) {
+				addItem(x, y);
+			}
+			nbItems--;
+		}
 	}
 }
 
@@ -99,6 +111,13 @@ void Map::addMonster(int x, int y) {
 		troll->ai = new MonsterAi();
 		engine.actors.push(troll);
 	}
+}
+
+void Map::addItem(int x, int y) {
+	Actor *healthPotion = new Actor(x, y, '!', "health potion", TCODColor::yellow);
+	healthPotion->blocks = false;
+	healthPotion->pickable = new Healer(4);
+	engine.actors.push(healthPotion);
 }
 
 bool Map::isWall(int x, int y) const {

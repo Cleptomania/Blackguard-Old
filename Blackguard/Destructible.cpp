@@ -3,6 +3,15 @@
 
 Destructible::Destructible(float maxHp, float defense, const char *corpseName) : maxHp(maxHp), hp(maxHp), defense(defense), corpseName(corpseName) {}
 
+float Destructible::heal(float amount) {
+	hp += amount;
+	if (hp > maxHp) {
+		amount -= hp - maxHp;
+		hp = maxHp;
+	}
+	return amount;
+}
+
 float Destructible::takeDamage(Actor *owner, float damage) {
 	damage -= defense;
 	if (damage > 0) {

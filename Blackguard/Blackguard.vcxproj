@@ -120,22 +120,26 @@
   <ItemGroup>
     <ClCompile Include="Ai.cpp" />
     <ClCompile Include="Attacker.cpp" />
+    <ClCompile Include="Container.cpp" />
     <ClCompile Include="Destructible.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="Gui.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="Actor.cpp" />
+    <ClCompile Include="Pickable.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h" />
     <ClInclude Include="Ai.h" />
     <ClInclude Include="Attacker.h" />
+    <ClInclude Include="Container.h" />
     <ClInclude Include="Destructible.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="Gui.h" />
     <ClInclude Include="Main.h" />
     <ClInclude Include="Map.h" />
+    <ClInclude Include="Pickable.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

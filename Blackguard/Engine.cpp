@@ -7,6 +7,7 @@ Engine::Engine(int screenWidth, int screenHeight) : screenWidth(screenWidth), sc
 	player->destructible = new PlayerDestructible(30, 2, "your body");
 	player->attacker = new Attacker(5);
 	player->ai = new PlayerAi();
+	player->container = new Container(26);
 	actors.push(player);
 	map = new Map(120, 68);
 	gui = new Gui();

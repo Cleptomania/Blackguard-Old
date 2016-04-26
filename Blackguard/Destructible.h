@@ -9,7 +9,9 @@ public:
 	const char *corpseName; //name once actor is dead or destroyed
 
 	Destructible(float maxHp, float defense, const char *corpseName);
+	virtual ~Destructible() {};
 	inline bool isDead() { return hp <= 0; }
+	float heal(float amount);
 	float takeDamage(Actor *owner, float damage);
 	virtual void die(Actor *owner);
 };
