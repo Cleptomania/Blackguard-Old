@@ -24,6 +24,7 @@ public:
 
 	Engine(int screenWidth, int screenHeight);
 	~Engine();
+	Actor *getClosestMonster(int x, int y, float range) const;
 	void sendToBack(Actor *actor);
 	void update();
 	void render();
