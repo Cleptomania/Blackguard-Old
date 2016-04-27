@@ -36,6 +36,7 @@ public:
 };
 
 Map::Map(int width, int height) : width(width), height(height) {
+	seed = TCODRandom::getInstance()->getInt(0, 0x7FFFFFFF);
 	tiles = new Tile[width*height];
 	map = new TCODMap(width, height);
 	TCODBsp bsp(0, 0, width, height);
@@ -47,6 +48,16 @@ Map::Map(int width, int height) : width(width), height(height) {
 Map::~Map() {
 	delete[] tiles;
 	delete map;
+}
+
+void Map::init(bool withActors) {
+	rng = new TCODRandom(seed, TCOD_RNG_CMWC);
+	tiles = new Tile[width*height];
+	map = new TCODMap(width, height);
+	TCODBsp bsp(0, 0, width, height);
+	bsp.splitRecursive(rng, 8, ROOM_MAX_SIZE, ROOM_MAX_SIZE, 1.5f, 1.5f);
+	BspListener listener(*this);
+	bsp.traverseInvertedLevelOrder(&listener, (void *)withActors);
 }
 
 void Map::dig(int x1, int y1, int x2, int y2) {
@@ -131,6 +142,11 @@ void Map::addItem(int x, int y) {
 		scrollOfFireball->blocks = false;
 		scrollOfFireball->pickable = new Fireball(3, 12);
 		engine.actors.push(scrollOfFireball);
+	} else if (dice < 70+10+10+10) {
+		Actor *scrollOfConfusion = new Actor(x, y, '#', "scroll of confusion", TCODColor::lightYellow);
+		scrollOfConfusion->blocks = false;
+		scrollOfConfusion->pickable = new Confuser(10, 8);
+		engine.actors.push(scrollOfConfusion);
 	}
 	
 }

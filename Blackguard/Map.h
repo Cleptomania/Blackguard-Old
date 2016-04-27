@@ -19,11 +19,14 @@ public:
 	void render() const;
 	void addMonster(int x, int y);
 	void addItem(int x, int y);
+	void init(bool withActors);
 protected:
 	Tile *tiles;
 	TCODMap *map;
+	long seed;
+	TCODRandom *rng;
 	friend class BspListener;
 
 	void dig(int x1, int y1, int x2, int y2);
-	void createRoom(bool first, int x1, int y1, int x2, int y2);
+	void createRoom(bool first, int x1, int y1, int x2, int y2, bool withActors);
 };

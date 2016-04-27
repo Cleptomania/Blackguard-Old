@@ -3,7 +3,17 @@
 Engine::Engine(int screenWidth, int screenHeight) : screenWidth(screenWidth), screenHeight(screenHeight), gameStatus(STARTUP), fovRadius(10) {
 	TCODConsole::setCustomFont("arial12x12.png", TCOD_FONT_LAYOUT_TCOD | TCOD_FONT_TYPE_GREYSCALE);
 	TCODConsole::initRoot(screenWidth, screenHeight, "Blackguard", false);
-	player = new Actor(40, 25, '@', "Player", TCODColor::white);
+	gui->message(TCODColor::red, "Welcome to Blackguard!\nGreat treasure awaits you in the dungeons ahead.");
+}
+
+Engine::~Engine() {
+	actors.clearAndDelete();
+	delete map;
+	delete gui;
+}
+
+void Engine::init() {
+	player = new Actor(40, 25, 'A', "player", TCODColor::white);
 	player->destructible = new PlayerDestructible(30, 2, "your body");
 	player->attacker = new Attacker(5);
 	player->ai = new PlayerAi();
@@ -14,24 +24,19 @@ Engine::Engine(int screenWidth, int screenHeight) : screenWidth(screenWidth), sc
 	gui->message(TCODColor::red, "Welcome to Blackguard!\nGreat treasure awaits you in the dungeons ahead.");
 }
 
-Engine::~Engine() {
-	actors.clearAndDelete();
-	delete map;
-	delete gui;
-}
-
 bool Engine::pickATile(int *x, int *y, float maxRange) {
 	while (!TCODConsole::isWindowClosed()) {
 		render();
 		for (int cx = 0; cx < map->width; cx++) {
 			for (int cy = 0; cy < map->height; cy++) {
-				if (map->isInFov(cx, cy) && (maxRange == 0 || player->getDistance(cx, cy) < maxRange)) {
+				if (map->isInFov(cx, cy) && (maxRange == 0 || player->getDistance(cx, cy) <= maxRange)) {
 					TCODColor col = TCODConsole::root->getCharBackground(cx, cy);
 					col = col * 1.2f;
 					TCODConsole::root->setCharBackground(cx, cy, col);
 				}
 			}
 		}
+		TCODSystem::checkForEvent(TCOD_EVENT_KEY_PRESS | TCOD_EVENT_MOUSE, &lastKey, &mouse);
 		if (map->isInFov(mouse.cx, mouse.cy) && (maxRange == 0 || player->getDistance(mouse.cx, mouse.cy) <= maxRange)) {
 			TCODConsole::root->setCharBackground(mouse.cx, mouse.cy, TCODColor::white);
 			if (mouse.lbutton_pressed) {
@@ -46,6 +51,16 @@ bool Engine::pickATile(int *x, int *y, float maxRange) {
 		TCODConsole::flush();
 	}
 	return false;
+}
+
+Actor *Engine::getActor(int x, int y) const {
+	for (Actor **iterator = actors.begin(); iterator != actors.end(); iterator++) {
+		Actor *actor = *iterator;
+		if (actor->x == x && actor->y == y && actor->destructible && !actor->destructible->isDead()) {
+			return actor;
+		}
+	}
+	return NULL;
 }
 
 Actor *Engine::getClosestMonster(int x, int y, float range) const {

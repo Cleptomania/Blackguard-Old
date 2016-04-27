@@ -1,5 +1,15 @@
 #include "Main.h"
 
+void Pickable::drop(Actor *owner, Actor *wearer) {
+	if (wearer->container) {
+		wearer->container->remove(owner);
+		engine.actors.push(owner);
+		owner->x = wearer->x;
+		owner->y = wearer->y;
+		engine.gui->message(TCODColor::lightGrey, "%s dropped a %s.", wearer->name, owner->name);
+	}
+}
+
 bool Pickable::pick(Actor *owner, Actor *wearer) {
 	if (wearer->container && wearer->container->add(owner)) {
 		engine.actors.remove(owner);
@@ -58,5 +68,23 @@ bool Fireball::use(Actor *owner, Actor *wearer) {
 			actor->destructible->takeDamage(actor, damage);
 		}
 	}
+	return Pickable::use(owner, wearer);
+}
+
+Confuser::Confuser(int nbTurns, float range) : nbTurns(nbTurns), range(range) {}
+
+bool Confuser::use(Actor *owner, Actor *wearer) {
+	engine.gui->message(TCODColor::cyan, "Left-click an enemy to confuse it, or right-click to cancel.");
+	int x, y;
+	if (!engine.pickATile(&x, &y, range)) {
+		return false;
+	}
+	Actor *actor = engine.getActor(x, y);
+	if (!actor) {
+		return false;
+	}
+	Ai *confusedAi = new ConfusedMonsterAi(nbTurns, actor->ai);
+	actor->ai = confusedAi;
+	engine.gui->message(TCODColor::lightGreen, "The %s is confused and begins to stumble around!", actor->name);
 	return Pickable::use(owner, wearer);
 }
