@@ -7,7 +7,7 @@ public:
 		HEALER, LIGHTNING_BOLT, CONFUSER, FIREBALL
 	} type;
 
-	public Pickable(PickableType type);
+	Pickable(PickableType type);
 	void drop(Actor *owner, Actor *wearer);
 	bool pick(Actor *owner, Actor *wearer);
 	virtual bool use(Actor *owner, Actor *wearer);
@@ -28,8 +28,9 @@ public:
 	bool use(Actor *owner, Actor *wearer);
 };
 
-class Fireball : public LightningBolt {
+class Fireball : public Pickable {
 public:
+	float range, damage;
 	Fireball(float range, float damage);
 	bool use(Actor *owner, Actor *wearer);
 };

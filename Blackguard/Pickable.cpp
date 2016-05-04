@@ -54,7 +54,7 @@ bool LightningBolt::use(Actor *owner, Actor *wearer) {
 	return Pickable::use(owner, wearer);
 }
 
-Fireball::Fireball(float range, float damage) : LightningBolt(range, damage) {}
+Fireball::Fireball(float range, float damage) : Pickable(FIREBALL), range(range), damage(damage) {}
 
 bool Fireball::use(Actor *owner, Actor *wearer) {
 	engine.gui->message(TCODColor::cyan, "Left-click a target for the fireball, or right-click to cancel.");
@@ -73,7 +73,7 @@ bool Fireball::use(Actor *owner, Actor *wearer) {
 	return Pickable::use(owner, wearer);
 }
 
-Confuser::Confuser(int nbTurns, float range) : nbTurns(nbTurns), range(range) {}
+Confuser::Confuser(int nbTurns, float range) : Pickable(CONFUSER), nbTurns(nbTurns), range(range) {}
 
 bool Confuser::use(Actor *owner, Actor *wearer) {
 	engine.gui->message(TCODColor::cyan, "Left-click an enemy to confuse it, or right-click to cancel.");
