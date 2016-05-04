@@ -1,4 +1,6 @@
 #include "Main.h"
+#define TORCH_RADIUS 10.0f
+#define SQUARED_TORCH_RADIUS (TORCH_RADIUS * TORCH_RADIUS)
 
 static const int ROOM_MAX_SIZE = 12;
 static const int ROOM_MIN_SIZE = 6;
@@ -15,14 +17,14 @@ private:
 public:
 	BspListener(Map &map) : map(map), roomNum(0) {}
 	bool visitNode(TCODBsp *node, void *userData) {
+		bool withActors = (bool)userData;
 		if (node->isLeaf()) {
 			int x, y, w, h;
-			TCODRandom *rng = TCODRandom::getInstance();
-			w = rng->getInt(ROOM_MIN_SIZE, node->w - 2);
-			h = rng->getInt(ROOM_MIN_SIZE, node->h - 2);
-			x = rng->getInt(node->x + 1, node->x + node->w - w - 1);
-			y = rng->getInt(node->y + 1, node->y + node->h - h - 1);
-			map.createRoom(roomNum == 0, x, y, x + w - 1, y + h - 1);
+			w = map.rng->getInt(ROOM_MIN_SIZE, node->w - 2);
+			h = map.rng->getInt(ROOM_MIN_SIZE, node->h - 2);
+			x = map.rng->getInt(node->x + 1, node->x + node->w - w - 1);
+			y = map.rng->getInt(node->y + 1, node->y + node->h - h - 1);
+			map.createRoom(roomNum == 0, x, y, x + w - 1, y + h - 1, withActors);
 			if (roomNum != 0) {
 				map.dig(lastx, lasty, x + w / 2, lasty);
 				map.dig(x + w / 2, lasty, x + w / 2, y + h / 2);
@@ -37,12 +39,6 @@ public:
 
 Map::Map(int width, int height) : width(width), height(height) {
 	seed = TCODRandom::getInstance()->getInt(0, 0x7FFFFFFF);
-	tiles = new Tile[width*height];
-	map = new TCODMap(width, height);
-	TCODBsp bsp(0, 0, width, height);
-	bsp.splitRecursive(NULL, 8, ROOM_MAX_SIZE, ROOM_MAX_SIZE, 1.5f, 1.5f);
-	BspListener listener(*this);
-	bsp.traverseInvertedLevelOrder(&listener, NULL);
 }
 
 Map::~Map() {
@@ -54,6 +50,8 @@ void Map::init(bool withActors) {
 	rng = new TCODRandom(seed, TCOD_RNG_CMWC);
 	tiles = new Tile[width*height];
 	map = new TCODMap(width, height);
+	noise = new TCODNoise(1);
+	torchx = 0.0f;
 	TCODBsp bsp(0, 0, width, height);
 	bsp.splitRecursive(rng, 8, ROOM_MAX_SIZE, ROOM_MAX_SIZE, 1.5f, 1.5f);
 	BspListener listener(*this);
@@ -78,8 +76,11 @@ void Map::dig(int x1, int y1, int x2, int y2) {
 	}
 }
 
-void Map::createRoom(bool first, int x1, int y1, int x2, int y2) {
+void Map::createRoom(bool first, int x1, int y1, int x2, int y2, bool withActors) {
 	dig(x1, y1, x2, y2);
+	if (!withActors) {
+		return;
+	}
 	if (first) {
 		engine.player->x = (x1 + x2) / 2;
 		engine.player->y = (y1 + y2) / 2;
@@ -132,21 +133,25 @@ void Map::addItem(int x, int y) {
 		healthPotion->blocks = false;
 		healthPotion->pickable = new Healer(4);
 		engine.actors.push(healthPotion);
+		engine.sendToBack(healthPotion);
 	} else if (dice < 70+10) {
 		Actor *scrollOfLightningBolt = new Actor(x, y, '#', "scroll of lightning bolt", TCODColor::lightYellow);
 		scrollOfLightningBolt->blocks = false;
 		scrollOfLightningBolt->pickable = new LightningBolt(5, 20);
 		engine.actors.push(scrollOfLightningBolt);
+		engine.sendToBack(scrollOfLightningBolt);
 	} else if (dice < 70+10+10) {
 		Actor *scrollOfFireball = new Actor(x, y, '#', "scroll of fireball", TCODColor::lightYellow);
 		scrollOfFireball->blocks = false;
 		scrollOfFireball->pickable = new Fireball(3, 12);
 		engine.actors.push(scrollOfFireball);
+		engine.sendToBack(scrollOfFireball);
 	} else if (dice < 70+10+10+10) {
 		Actor *scrollOfConfusion = new Actor(x, y, '#', "scroll of confusion", TCODColor::lightYellow);
 		scrollOfConfusion->blocks = false;
 		scrollOfConfusion->pickable = new Confuser(10, 8);
 		engine.actors.push(scrollOfConfusion);
+		engine.sendToBack(scrollOfConfusion);
 	}
 	
 }
@@ -184,30 +189,46 @@ bool Map::canWalk(int x, int y) const {
 }
 
 void Map::computeFov() {
-	map->computeFov(engine.player->x, engine.player->y, engine.fovRadius);
+	map->computeFov(engine.player->x, engine.player->y, (int) (TORCH_RADIUS), true, (TCOD_fov_algorithm_t) 0);
 }
 
-void Map::render() const {
-	static const TCODColor lightWallBack(255, 221, 229);
-	static const TCODColor darkWallBack(43, 38, 76);
-	static const TCODColor wallFore(0, 0, 0);
+void Map::render() {
+	static const TCODColor darkWall(0, 0, 60);
+	static const TCODColor lightWall(130, 110, 50);
 
-	static const TCODColor lightGroundBack(10, 7, 33);
-	static const TCODColor darkGroundBack(15, 15, 38);
-	static const TCODColor groundFore(255, 255, 255);
+	static const TCODColor darkGround(25, 25, 40);
+	static const TCODColor lightGround(200, 180, 50);
+
+	float dx = 0.0f, dy = 0.0f, di = 0.0f;
+	torchx += 0.2f;
+	float tdx = torchx + 20.0f;
+	dx = noise->get(&tdx) * 1.5f;
+	tdx += 30.0f;
+	dy = noise->get(&tdx) * 1.5f;
+	di = 0.2f * noise->get(&torchx);
 
 	for (int x = 0; x < width; x++) {
 		for (int y = 0; y < height; y++) {
-			if (isInFov(x, y)) {
-				TCODConsole::root->setCharBackground(x, y, isWall(x, y) ? lightWallBack : lightGroundBack);
-				TCODConsole::root->setChar(x, y, isWall(x, y) ? '#' : '.');
-				TCODConsole::root->setCharForeground(x, y, groundFore);
-			} else if (isExplored(x, y)) {
-				TCODConsole::root->setCharBackground(x, y, isWall(x, y) ? darkWallBack : darkGroundBack);
-				TCODConsole::root->setChar(x, y, isWall(x, y) ? '#' : '.');
-				TCODConsole::root->setCharForeground(x, y, groundFore);
+			bool visible = isInFov(x, y);
+			bool explored = isExplored(x, y);
+			bool wall = isWall(x, y);
+			if (!visible) {
+				if (explored) {
+					TCODConsole::root->setCharBackground(x, y, wall ? darkWall : darkGround, TCOD_BKGND_SET);
+				} else {
+					TCODConsole::root->setCharBackground(x, y, TCODColor::black);
+				}
 			} else {
-				TCODConsole::root->setCharBackground(x, y, TCODColor::black);
+				TCODColor base = (wall ? darkWall : darkGround);
+				TCODColor light = (wall ? lightWall : lightGround);
+				float r = (float)((x - engine.player->x + dx) * (x - engine.player->x + dx) + (y - engine.player->y + dy) * (y - engine.player->y + dy));
+				if (r < SQUARED_TORCH_RADIUS) {
+					float l = (SQUARED_TORCH_RADIUS - r) / SQUARED_TORCH_RADIUS + di;
+					l = CLAMP(0.0f, 1.0f, l);
+					base = TCODColor::lerp(base, light, l);
+				}
+				light = base;
+				TCODConsole::root->setCharBackground(x, y, light, TCOD_BKGND_SET);
 			}
 		}
 	}

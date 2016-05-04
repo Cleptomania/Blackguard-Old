@@ -1,8 +1,13 @@
 #pragma once
 class Actor;
 
-class Pickable {
+class Pickable : public Serializable {
 public:
+	enum PickableType {
+		HEALER, LIGHTNING_BOLT, CONFUSER, FIREBALL
+	} type;
+
+	public Pickable(PickableType type);
 	void drop(Actor *owner, Actor *wearer);
 	bool pick(Actor *owner, Actor *wearer);
 	virtual bool use(Actor *owner, Actor *wearer);

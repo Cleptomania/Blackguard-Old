@@ -5,9 +5,10 @@ struct Tile {
 	Tile() : explored(false) {}
 };
 
-class Map {
+class Map : public Serializable {
 public:
 	int width, height;
+	float torchx;
 
 	Map(int width, int height);
 	~Map();
@@ -16,13 +17,16 @@ public:
 	bool isExplored(int x, int y) const;
 	bool canWalk(int x, int y) const;
 	void computeFov();
-	void render() const;
+	void render();
 	void addMonster(int x, int y);
 	void addItem(int x, int y);
 	void init(bool withActors);
+	void load(json j);
+	void save(json j);
 protected:
 	Tile *tiles;
 	TCODMap *map;
+	TCODNoise *noise;
 	long seed;
 	TCODRandom *rng;
 	friend class BspListener;

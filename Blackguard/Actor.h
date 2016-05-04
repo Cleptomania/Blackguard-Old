@@ -1,6 +1,6 @@
 #pragma once
 
-class Actor {
+class Actor : public Serializable {
 public:
 	int x, y;
 	int ch;
@@ -18,4 +18,6 @@ public:
 	float getDistance(int cx, int cy) const;
 	void update();
 	void render() const;
+	void load(json j);
+	void save(json j);
 };

@@ -1,7 +1,7 @@
 #pragma once
 class Actor;
 
-class Container {
+class Container : public Serializable {
 public:
 	int size;
 	TCODList<Actor *> inventory;
@@ -10,4 +10,6 @@ public:
 	~Container();
 	bool add(Actor *actor);
 	void remove(Actor *actor);
+	void load(json j);
+	void save(json j);
 };

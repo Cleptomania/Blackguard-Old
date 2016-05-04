@@ -3,7 +3,6 @@
 Engine::Engine(int screenWidth, int screenHeight) : screenWidth(screenWidth), screenHeight(screenHeight), gameStatus(STARTUP), fovRadius(10) {
 	TCODConsole::setCustomFont("arial12x12.png", TCOD_FONT_LAYOUT_TCOD | TCOD_FONT_TYPE_GREYSCALE);
 	TCODConsole::initRoot(screenWidth, screenHeight, "Blackguard", false);
-	gui->message(TCODColor::red, "Welcome to Blackguard!\nGreat treasure awaits you in the dungeons ahead.");
 }
 
 Engine::~Engine() {
@@ -13,13 +12,14 @@ Engine::~Engine() {
 }
 
 void Engine::init() {
-	player = new Actor(40, 25, 'A', "player", TCODColor::white);
+	player = new Actor(40, 25, '@', "player", TCODColor::white);
 	player->destructible = new PlayerDestructible(30, 2, "your body");
 	player->attacker = new Attacker(5);
 	player->ai = new PlayerAi();
 	player->container = new Container(26);
 	actors.push(player);
 	map = new Map(120, 68);
+	map->init(true);
 	gui = new Gui();
 	gui->message(TCODColor::red, "Welcome to Blackguard!\nGreat treasure awaits you in the dungeons ahead.");
 }

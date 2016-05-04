@@ -1,5 +1,7 @@
 #include "Main.h"
 
+Pickable::Pickable(PickableType type) : type(type) {}
+
 void Pickable::drop(Actor *owner, Actor *wearer) {
 	if (wearer->container) {
 		wearer->container->remove(owner);
@@ -27,7 +29,7 @@ bool Pickable::use(Actor *owner, Actor *wearer) {
 	return false;
 }
 
-Healer::Healer(float amount) : amount(amount) {}
+Healer::Healer(float amount) : Pickable(HEALER), amount(amount) {}
 
 bool Healer::use(Actor *owner, Actor *wearer) {
 	if (wearer->destructible) {
@@ -39,7 +41,7 @@ bool Healer::use(Actor *owner, Actor *wearer) {
 	return false;
 }
 
-LightningBolt::LightningBolt(float range, float damage) : range(range), damage(damage) {}
+LightningBolt::LightningBolt(float range, float damage) : Pickable(LIGHTNING_BOLT), range(range), damage(damage) {}
 
 bool LightningBolt::use(Actor *owner, Actor *wearer) {
 	Actor *closestMonster = engine.getClosestMonster(wearer->x, wearer->y, range);
