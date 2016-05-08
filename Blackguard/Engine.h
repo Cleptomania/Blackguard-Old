@@ -31,7 +31,6 @@ public:
 	void update();
 	void render();
 	void init();
-	void load();
 	void save();
 };
 

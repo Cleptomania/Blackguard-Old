@@ -21,7 +21,6 @@ public:
 	void addMonster(int x, int y);
 	void addItem(int x, int y);
 	void init(bool withActors);
-	void load(json j);
 	void save(json j);
 protected:
 	Tile *tiles;

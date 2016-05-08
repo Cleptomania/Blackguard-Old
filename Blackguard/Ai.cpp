@@ -4,7 +4,9 @@
 
 static const int TRACKING_TURNS = 3;
 
-MonsterAi::MonsterAi() : moveCount(0) {}
+Ai::Ai(AiType type) : type(type) {}
+
+MonsterAi::MonsterAi() : Ai(MONSTER), moveCount(0) {}
 
 void MonsterAi::update(Actor *owner) {
 	if (owner->destructible && owner->destructible->isDead()) {
@@ -46,7 +48,7 @@ void MonsterAi::moveOrAttack(Actor *owner, int targetx, int targety) {
 	}
 }
 
-ConfusedMonsterAi::ConfusedMonsterAi(int nbTurns, Ai *oldAi) : nbTurns(nbTurns), oldAi(oldAi) {}
+ConfusedMonsterAi::ConfusedMonsterAi(int nbTurns, Ai *oldAi) : Ai(CONFUSED_MONSTER), nbTurns(nbTurns), oldAi(oldAi) {}
 
 void ConfusedMonsterAi::update(Actor *owner) {
 	TCODRandom *rng = TCODRandom::getInstance();
@@ -69,6 +71,8 @@ void ConfusedMonsterAi::update(Actor *owner) {
 		delete this;
 	}
 }
+
+PlayerAi::PlayerAi() : Ai(PLAYER) {}
 
 void PlayerAi::update(Actor *owner) {
 	if (owner->destructible && owner->destructible->isDead()) {

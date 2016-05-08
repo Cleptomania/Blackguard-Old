@@ -6,7 +6,6 @@ public:
 	~Gui();
 	void render();
 	void message(const TCODColor &col, const char *text, ...);
-	void load(json j);
 	void save(json j);
 
 protected:

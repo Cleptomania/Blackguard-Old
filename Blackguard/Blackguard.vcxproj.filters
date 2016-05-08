@@ -27,9 +27,6 @@
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Destructible.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Attacker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -46,6 +43,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Serializable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Destructible.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

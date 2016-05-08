@@ -17,9 +17,7 @@ public:
 	float heal(float amount);
 	float takeDamage(Actor *owner, float damage);
 	virtual void die(Actor *owner);
-	void load(json j);
 	void save(json j);
-	static Destructible *create(json j);
 };
 
 class MonsterDestructible : public Destructible {

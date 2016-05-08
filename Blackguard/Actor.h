@@ -18,6 +18,5 @@ public:
 	float getDistance(int cx, int cy) const;
 	void update();
 	void render() const;
-	void load(json j);
 	void save(json j);
 };

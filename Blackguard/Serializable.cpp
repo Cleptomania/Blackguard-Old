@@ -1,3 +1,6 @@
+#include <fstream>
+#include <string>
+#include <iostream>
 #include "Main.h"
 
 void Gui::save(json j) {
@@ -8,10 +11,6 @@ void Gui::save(json j) {
 		j2["messages"].operator+=(j3);
 	}
 	j["gui"] = j2;
-}
-
-void Gui::load(json j) {
-
 }
 
 /*
@@ -37,10 +36,6 @@ void Map::save(json j) {
 		j2["tiles_explored"].operator+=({ i, tiles[i].explored });
 	}
 	j["map"] = j2;
-}
-
-void Map::load(json j) {
-
 }
 
 void Actor::save(json j) {
@@ -72,26 +67,24 @@ void Actor::save(json j) {
 
 	if (pickable) {
 		pickable->save(j2);
-	}
-	else {
+	} else {
 		j2["pickable"] = false;
 	}
 
+	if (ai) {
+		ai->save(j2);
+	}
+	else {
+		j2["ai"] = false;
+	}
+
 	j["actor"] = j2;
-}
-
-void Actor::load(json j) {
-
 }
 
 void Attacker::save(json j) {
 	json j2;
 	j2["power"] = power;
 	j["attacker"] = j2;
-}
-
-void Attacker::load(json j) {
-
 }
 
 void Destructible::save(json j) {
@@ -108,14 +101,6 @@ void Destructible::save(json j) {
 	j["destructible"] = j2;
 }
 
-void Destructible::load(json j) {
-
-}
-
-Destructible *Destructible::create(json j) {
-
-}
-
 void Container::save(json j) {
 	json j2;
 	j2["size"] = size;
@@ -125,13 +110,48 @@ void Container::save(json j) {
 	j["container"] = j2;
 }
 
-void Container::load(json j) {
+void Healer::save(json j) {
+	json j2;
+	j2["amount"] = amount;
+	j["healer"] = j2;
+}
 
+void LightningBolt::save(json j) {
+	json j2;
+	j2["range"] = range;
+	j2["damage"] = damage;
+	j["lightning_bolt"] = j2;
+}
+
+void Fireball::save(json j) {
+	json j2;
+	j2["range"] = range;
+	j2["damage"] = damage;
+	j["fireball"] = j2;
+}
+
+void Confuser::save(json j) {
+	json j2;
+	j2["nbTurns"] = nbTurns;
+	j2["range"] = range;
+	j["confuser"] = j2;
+}
+
+void MonsterAi::save(json j) {
+	json j2;
+	j2["move_count"] = moveCount;
+	j["monsterai"] = j2;
+}
+
+void ConfusedMonsterAi::save(json j) {
+	json j2;
+	j2["nbTurns"] = nbTurns;
+	j["confusedmonsterai"] = j2;
 }
 
 void Engine::save() {
 	if (player->destructible->isDead()) {
-		TCODSystem::deleteFile("game.sav");
+		TCODSystem::deleteFile("game.txt");
 	} else {
 		json j;
 		j["width"] = map->width;
@@ -145,6 +165,10 @@ void Engine::save() {
 			}
 		}
 		gui->save(j);
+		std::string output = j.dump(4);
+		std::ofstream out("game.txt");
+		out << output;
+		out.close();
 	}
 }
 
@@ -157,6 +181,8 @@ TCODColor *Serializable::loadColor(json j) {
 	return col;
 	
 }
+
+void Serializable::save(json j) {}
 
 json Serializable::saveColor(TCODColor col) {
 	int h = col.getHue();

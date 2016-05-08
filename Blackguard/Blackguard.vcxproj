@@ -69,9 +69,9 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>D:\libtcod\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\libtcod\lib;$(LibraryPath)</LibraryPath>
-    <SourcePath>D:\libtcod\src;$(SourcePath)</SourcePath>
+    <IncludePath>C:\libtcod\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\libtcod\lib;$(LibraryPath)</LibraryPath>
+    <SourcePath>C:\libtcod\src;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>C:\libtcod\include;$(IncludePath)</IncludePath>
@@ -85,7 +85,7 @@
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>D:\libtcod;D:\libtcod\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\libtcod;C:\libtcod\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>libtcod-VS.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -98,6 +98,7 @@
     <Link>
       <AdditionalLibraryDirectories>C:\libtcod\lib;C:\libtcod;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>libtcod-VS.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <TargetMachine>MachineX86</TargetMachine>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

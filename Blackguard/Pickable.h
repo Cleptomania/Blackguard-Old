@@ -19,6 +19,7 @@ public:
 
 	Healer(float amount);
 	bool use(Actor *owner, Actor *wearer);
+	void save(json j);
 };
 
 class LightningBolt : public Pickable {
@@ -26,6 +27,7 @@ public:
 	float range, damage;
 	LightningBolt(float range, float damage);
 	bool use(Actor *owner, Actor *wearer);
+	void save(json j);
 };
 
 class Fireball : public Pickable {
@@ -33,6 +35,7 @@ public:
 	float range, damage;
 	Fireball(float range, float damage);
 	bool use(Actor *owner, Actor *wearer);
+	void save(json j);
 };
 
 class Confuser : public Pickable {
@@ -41,4 +44,5 @@ public:
 	float range;
 	Confuser(int nbTurns, float range);
 	bool use(Actor *owner, Actor *wearer);
+	void save(json j);
 };

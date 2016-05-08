@@ -10,5 +10,6 @@ int main() {
 		engine.render();
 		TCODConsole::flush();
 	}
+	engine.save();
 	return 0;
 }

@@ -7,6 +7,5 @@ public:
 
 	Attacker(float power);
 	void attack(Actor *owner, Actor *target);
-	void load(json j);
 	void save(json j);
 };
