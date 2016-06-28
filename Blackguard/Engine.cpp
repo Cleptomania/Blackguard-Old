@@ -1,13 +1,13 @@
 #include "Main.h"
 
-Engine::Engine(int screenWidth, int screenHeight) : screenWidth(screenWidth), screenHeight(screenHeight), gameStatus(STARTUP), fovRadius(10) {
+Engine::Engine(int screenWidth, int screenHeight) : screenWidth(screenWidth), screenHeight(screenHeight), level(1), gameStatus(STARTUP), fovRadius(10) {
 	TCODConsole::setCustomFont("arial12x12.png", TCOD_FONT_LAYOUT_TCOD | TCOD_FONT_TYPE_GREYSCALE);
 	TCODConsole::initRoot(screenWidth, screenHeight, "Blackguard", false);
+	gui = new Gui();
 }
 
 Engine::~Engine() {
-	actors.clearAndDelete();
-	delete map;
+	term();
 	delete gui;
 }
 
@@ -18,10 +18,20 @@ void Engine::init() {
 	player->ai = new PlayerAi();
 	player->container = new Container(26);
 	actors.push(player);
-	map = new Map(120, 68);
+	stairs = new Actor(0, 0, '>', "stairs", TCODColor::white);
+	stairs->blocks = false;
+	stairs->fovOnly = false;
+	actors.push(stairs);
+	map = new Map(160, 93);
 	map->init(true);
-	gui = new Gui();
 	gui->message(TCODColor::red, "Welcome to Blackguard!\nGreat treasure awaits you in the dungeons ahead.");
+	gameStatus = STARTUP;
+}
+
+void Engine::term() {
+	actors.clearAndDelete();
+	if (map) delete map;
+	gui->clear();
 }
 
 bool Engine::pickATile(int *x, int *y, float maxRange) {
@@ -79,6 +89,23 @@ Actor *Engine::getClosestMonster(int x, int y, float range) const {
 	return closest;
 }
 
+void Engine::nextLevel() {
+	level++;
+	gui->message(TCODColor::lightViolet, "You take a moment to rest, and recover your strength.");
+	player->destructible->heal(player->destructible->maxHp / 2);
+	gui->message(TCODColor::red, "After a rare moment of peace, you descend\ndeeper into the dungeon...");
+	delete map;
+	for (Actor **iterator = actors.begin(); iterator != actors.end(); iterator++) {
+		if (*iterator != player && *iterator != stairs) {
+			delete *iterator;
+			iterator = actors.remove(iterator);
+		}
+	}
+	map = new Map(160, 93);
+	map->init(true);
+	gameStatus = STARTUP;
+}
+
 void Engine::sendToBack(Actor *actor) {
 	actors.remove(actor);
 	actors.insertBefore(actor, 0);
@@ -88,6 +115,10 @@ void Engine::update() {
 	if (gameStatus == STARTUP) map->computeFov();
 	gameStatus = IDLE;
 	TCODSystem::checkForEvent(TCOD_EVENT_KEY_PRESS | TCOD_EVENT_MOUSE, &lastKey, &mouse);
+	if (lastKey.vk == TCODK_ESCAPE) {
+		save();
+		load(true);
+	}
 	player->update();
 	if (gameStatus == NEW_TURN) {
 		for (Actor **iterator = actors.begin(); iterator != actors.end(); iterator++) {
@@ -105,7 +136,7 @@ void Engine::render() {
 
 	for (Actor **iterator = actors.begin(); iterator != actors.end(); iterator++) {
 		Actor *actor = *iterator;
-		if (map->isInFov(actor->x, actor->y)) {
+		if (!actor->fovOnly && map->isExplored(actor->x, actor->y) || map->isInFov(actor->x, actor->y)) {
 			actor->render();
 		}
 	}

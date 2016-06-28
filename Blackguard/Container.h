@@ -1,7 +1,7 @@
 #pragma once
 class Actor;
 
-class Container : public Serializable {
+class Container : public Persistent {
 public:
 	int size;
 	TCODList<Actor *> inventory;
@@ -10,5 +10,6 @@ public:
 	~Container();
 	bool add(Actor *actor);
 	void remove(Actor *actor);
-	void save(json j);
+	void save(TCODZip &zip);
+	void load(TCODZip &zip);
 };

@@ -1,11 +1,12 @@
 #pragma once
 class Actor;
 
-class Attacker : public Serializable {
+class Attacker : public Persistent {
 public:
 	float power;
 
 	Attacker(float power);
 	void attack(Actor *owner, Actor *target);
-	void save(json j);
+	void save(TCODZip &zip);
+	void load(TCODZip &zip);
 };

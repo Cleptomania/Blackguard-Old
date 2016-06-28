@@ -1,12 +1,13 @@
 #pragma once
 
-class Actor : public Serializable {
+class Actor : public Persistent {
 public:
 	int x, y;
 	int ch;
 	const char *name;
 	TCODColor col;
 	bool blocks;
+	bool fovOnly;
 	Attacker *attacker;
 	Destructible *destructible;
 	Ai *ai;
@@ -18,5 +19,6 @@ public:
 	float getDistance(int cx, int cy) const;
 	void update();
 	void render() const;
-	void save(json j);
+	void save(TCODZip &zip);
+	void load(TCODZip &zip);
 };

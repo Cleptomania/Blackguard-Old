@@ -7,12 +7,84 @@ static const int BAR_WIDTH = 20;
 static const int MSG_X = BAR_WIDTH + 2;
 static const int MSG_HEIGHT = PANEL_HEIGHT - 1;
 
+const int PAUSE_MENU_WIDTH = 30;
+const int PAUSE_MENU_HEIGHT = 15;
+
+Menu::~Menu() {
+	clear();
+}
+
+void Menu::clear() {
+	items.clearAndDelete();
+}
+
+void Menu::addItem(MenuItemCode code, const char *label) {
+	MenuItem *item = new MenuItem();
+	item->code = code;
+	item->label = label;
+	items.push(item);
+}
+
+Menu::MenuItemCode Menu::pick(DisplayMode mode) {
+	int selectedItem = 0;
+	int menux, menuy;
+	if (mode == PAUSE) {
+		menux = engine.screenWidth / 2 - PAUSE_MENU_WIDTH / 2;
+		menuy = engine.screenHeight / 2 - PAUSE_MENU_HEIGHT / 2;
+		TCODConsole::root->setDefaultForeground(TCODColor(200, 180, 50));
+		TCODConsole::root->printFrame(menux, menuy, PAUSE_MENU_WIDTH, PAUSE_MENU_HEIGHT, true, TCOD_BKGND_ALPHA(70), "Menu");
+		menux += 2;
+		menuy += 3;
+	} else if (mode == MAIN) {
+		static TCODImage img("menu_background.png");
+		img.blit2x(TCODConsole::root, 0, 0);
+		menux = 10;
+		menuy = TCODConsole::root->getHeight() / 3;
+	}
+	while (!TCODConsole::isWindowClosed()) {
+		int currentItem = 0;
+		for (MenuItem **iterator = items.begin(); iterator != items.end(); iterator++) {
+			if (currentItem == selectedItem) {
+				TCODConsole::root->setDefaultForeground(TCODColor::lighterOrange);
+			}
+			else {
+				TCODConsole::root->setDefaultForeground(TCODColor::lightGrey);
+			}
+			TCODConsole::root->print(menux, menuy + currentItem * 3, (*iterator)->label);
+			currentItem++;
+		}
+		TCODConsole::flush();
+		TCOD_key_t key;
+		TCODSystem::checkForEvent(TCOD_EVENT_KEY_PRESS, &key, NULL);
+		switch (key.vk) {
+		case TCODK_UP:
+			selectedItem--;
+			if (selectedItem < 0) {
+				selectedItem = items.size() - 1;
+			}
+			break;
+		case TCODK_DOWN:
+			selectedItem = (selectedItem + 1) % items.size();
+			break;
+		case TCODK_ENTER:
+			return items.get(selectedItem)->code;
+			break;
+		default: break;
+		}
+	}
+	return NONE;
+}
+
 Gui::Gui() {
 	con = new TCODConsole(engine.screenWidth, PANEL_HEIGHT);
 }
 
 Gui::~Gui() {
 	delete con;
+	clear();
+}
+
+void Gui::clear() {
 	log.clearAndDelete();
 }
 
@@ -32,6 +104,12 @@ void Gui::render() {
 		}
 	}
 	renderMouseLook();
+	con->setDefaultForeground(TCODColor::white);
+	con->print(3, 5, "Dungeon Level %d", engine.level);
+	PlayerAi *ai = (PlayerAi *)engine.player->ai;
+	char xpTxt[128];
+	sprintf_s(xpTxt, "XP(%d)", ai->xpLevel);
+	renderBar(1, 3, BAR_WIDTH, xpTxt, engine.player->destructible->xp, ai->getNextLevelXp(), TCODColor::lightViolet, TCODColor::darkerViolet);
 	TCODConsole::blit(con, 0, 0, engine.screenWidth, PANEL_HEIGHT, TCODConsole::root, 0, engine.screenHeight - PANEL_HEIGHT);
 }
 
@@ -93,7 +171,3 @@ void Gui::renderBar(int x, int y, int width, const char *name, float value, floa
 }
 
 Gui::Message::Message(const char *text, const TCODColor &col) : text(_strdup(text)), col(col) {}
-
-Gui::Message::~Message() {
-	free(text);
-}

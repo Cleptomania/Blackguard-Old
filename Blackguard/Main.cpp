@@ -1,10 +1,10 @@
 #include "libtcod.hpp"
 #include "Engine.h"
 
-Engine engine(120, 75);
+Engine engine(160, 100);
 
 int main() {
-	engine.init();
+	engine.load(false);
 	while (!TCODConsole::isWindowClosed()) {
 		engine.update();
 		engine.render();

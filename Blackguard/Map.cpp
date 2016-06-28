@@ -106,19 +106,21 @@ void Map::createRoom(bool first, int x1, int y1, int x2, int y2, bool withActors
 			nbItems--;
 		}
 	}
+	engine.stairs->x = (x1 + x2) / 2;
+	engine.stairs->y = (y1 + y2) / 2;
 }
 
 void Map::addMonster(int x, int y) {
 	TCODRandom *rng = TCODRandom::getInstance();
 	if (rng->getInt(0, 100) < 80) {
 		Actor *orc = new Actor(x, y, 'o', "Orc", TCODColor::desaturatedGreen);
-		orc->destructible = new MonsterDestructible(10, 0, "Dead Orc");
+		orc->destructible = new MonsterDestructible(10, 0, "Dead Orc", 50);
 		orc->attacker = new Attacker(3);
 		orc->ai = new MonsterAi();
 		engine.actors.push(orc);
 	} else {
 		Actor *troll = new Actor(x, y, 't', "Troll", TCODColor::darkerGreen);
-		troll->destructible = new MonsterDestructible(16, 1, "Dead Troll");
+		troll->destructible = new MonsterDestructible(16, 1, "Dead Troll", 100);
 		troll->attacker = new Attacker(4);
 		troll->ai = new MonsterAi();
 		engine.actors.push(troll);

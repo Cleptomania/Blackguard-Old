@@ -1,16 +1,16 @@
 #pragma once
 class Actor;
 
-class Pickable : public Serializable {
+class Pickable : public Persistent {
 public:
-	enum PickableType {
-		HEALER, LIGHTNING_BOLT, CONFUSER, FIREBALL
-	} type;
-
-	Pickable(PickableType type);
 	void drop(Actor *owner, Actor *wearer);
 	bool pick(Actor *owner, Actor *wearer);
 	virtual bool use(Actor *owner, Actor *wearer);
+	static Pickable *create(TCODZip &zip);
+protected:
+	enum PickableType {
+		HEALER, LIGHTNING_BOLT, CONFUSER, FIREBALL
+	};
 };
 
 class Healer : public Pickable {
@@ -19,7 +19,8 @@ public:
 
 	Healer(float amount);
 	bool use(Actor *owner, Actor *wearer);
-	void save(json j);
+	void save(TCODZip &zip);
+	void load(TCODZip &zip);
 };
 
 class LightningBolt : public Pickable {
@@ -27,7 +28,8 @@ public:
 	float range, damage;
 	LightningBolt(float range, float damage);
 	bool use(Actor *owner, Actor *wearer);
-	void save(json j);
+	void save(TCODZip &zip);
+	void load(TCODZip &zip);
 };
 
 class Fireball : public Pickable {
@@ -35,7 +37,8 @@ public:
 	float range, damage;
 	Fireball(float range, float damage);
 	bool use(Actor *owner, Actor *wearer);
-	void save(json j);
+	void save(TCODZip &zip);
+	void load(TCODZip &zip);
 };
 
 class Confuser : public Pickable {
@@ -44,5 +47,6 @@ public:
 	float range;
 	Confuser(int nbTurns, float range);
 	bool use(Actor *owner, Actor *wearer);
-	void save(json j);
+	void save(TCODZip &zip);
+	void load(TCODZip &zip);
 };

@@ -14,11 +14,13 @@ public:
 	} gameStatus;
 	int screenWidth;
 	int screenHeight;
+	int level;
 	Gui *gui;
 	TCOD_key_t lastKey;
 	TCOD_mouse_t mouse;
 	TCODList<Actor *> actors;
 	Actor *player;
+	Actor *stairs;
 	Map *map;
 	int fovRadius;
 
@@ -27,11 +29,14 @@ public:
 	bool pickATile(int *x, int *y, float maxRange = 0.0f);
 	Actor *getActor(int x, int y) const;
 	Actor *getClosestMonster(int x, int y, float range) const;
+	void nextLevel();
 	void sendToBack(Actor *actor);
 	void update();
 	void render();
 	void init();
+	void term();
 	void save();
+	void load(bool pause);
 };
 
 extern Engine engine;

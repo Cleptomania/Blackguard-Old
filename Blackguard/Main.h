@@ -1,8 +1,6 @@
 #pragma once
 #include "libtcod.hpp"
-#include "json.hpp"
-using json = nlohmann::json;
-#include "Serializable.h"
+#include "Persistent.h"
 #include "Destructible.h"
 #include "Attacker.h"
 #include "Ai.h"

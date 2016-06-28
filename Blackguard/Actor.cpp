@@ -1,7 +1,7 @@
 #include <math.h>
 #include "Main.h"
 
-Actor::Actor(int x, int y, int ch, const char *name, const TCODColor &col) : x(x), y(y), ch(ch), name(name), col(col), blocks(true), attacker(NULL), destructible(NULL), ai(NULL), pickable(NULL), container(NULL) {}
+Actor::Actor(int x, int y, int ch, const char *name, const TCODColor &col) : x(x), y(y), ch(ch), name(_strdup(name)), col(col), blocks(true), fovOnly(true), attacker(NULL), destructible(NULL), ai(NULL), pickable(NULL), container(NULL) {}
 
 Actor::~Actor() {
 	if (attacker) delete attacker;

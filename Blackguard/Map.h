@@ -5,7 +5,7 @@ struct Tile {
 	Tile() : explored(false) {}
 };
 
-class Map : public Serializable {
+class Map : public Persistent {
 public:
 	int width, height;
 	float torchx;
@@ -21,7 +21,8 @@ public:
 	void addMonster(int x, int y);
 	void addItem(int x, int y);
 	void init(bool withActors);
-	void save(json j);
+	void save(TCODZip &zip);
+	void load(TCODZip &zip);
 protected:
 	Tile *tiles;
 	TCODMap *map;

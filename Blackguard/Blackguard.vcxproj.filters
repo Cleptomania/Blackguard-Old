@@ -42,10 +42,10 @@
     <ClCompile Include="Pickable.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Serializable.cpp">
+    <ClCompile Include="Destructible.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Destructible.cpp">
+    <ClCompile Include="Persistent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -83,7 +83,7 @@
     <ClInclude Include="json.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Serializable.h">
+    <ClInclude Include="Persistent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

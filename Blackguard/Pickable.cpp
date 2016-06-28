@@ -1,7 +1,5 @@
 #include "Main.h"
 
-Pickable::Pickable(PickableType type) : type(type) {}
-
 void Pickable::drop(Actor *owner, Actor *wearer) {
 	if (wearer->container) {
 		wearer->container->remove(owner);
@@ -29,7 +27,7 @@ bool Pickable::use(Actor *owner, Actor *wearer) {
 	return false;
 }
 
-Healer::Healer(float amount) : Pickable(HEALER), amount(amount) {}
+Healer::Healer(float amount) : amount(amount) {}
 
 bool Healer::use(Actor *owner, Actor *wearer) {
 	if (wearer->destructible) {
@@ -41,7 +39,7 @@ bool Healer::use(Actor *owner, Actor *wearer) {
 	return false;
 }
 
-LightningBolt::LightningBolt(float range, float damage) : Pickable(LIGHTNING_BOLT), range(range), damage(damage) {}
+LightningBolt::LightningBolt(float range, float damage) : range(range), damage(damage) {}
 
 bool LightningBolt::use(Actor *owner, Actor *wearer) {
 	Actor *closestMonster = engine.getClosestMonster(wearer->x, wearer->y, range);
@@ -54,7 +52,7 @@ bool LightningBolt::use(Actor *owner, Actor *wearer) {
 	return Pickable::use(owner, wearer);
 }
 
-Fireball::Fireball(float range, float damage) : Pickable(FIREBALL), range(range), damage(damage) {}
+Fireball::Fireball(float range, float damage) : range(range), damage(damage) {}
 
 bool Fireball::use(Actor *owner, Actor *wearer) {
 	engine.gui->message(TCODColor::cyan, "Left-click a target for the fireball, or right-click to cancel.");
@@ -73,7 +71,7 @@ bool Fireball::use(Actor *owner, Actor *wearer) {
 	return Pickable::use(owner, wearer);
 }
 
-Confuser::Confuser(int nbTurns, float range) : Pickable(CONFUSER), nbTurns(nbTurns), range(range) {}
+Confuser::Confuser(int nbTurns, float range) : nbTurns(nbTurns), range(range) {}
 
 bool Confuser::use(Actor *owner, Actor *wearer) {
 	engine.gui->message(TCODColor::cyan, "Left-click an enemy to confuse it, or right-click to cancel.");

@@ -1,7 +1,13 @@
 #include <stdio.h>
 #include "Main.h"
 
-Destructible::Destructible(float maxHp, float defense, const char *corpseName, DestructibleType type) : maxHp(maxHp), hp(maxHp), defense(defense), corpseName(corpseName), type(type) {}
+Destructible::Destructible(float maxHp, float defense, const char *corpseName, int xp) : maxHp(maxHp), hp(maxHp), defense(defense), xp(xp) {
+	this->corpseName = _strdup(corpseName);
+}
+
+Destructible::~Destructible() {
+	free((char *) corpseName);
+}
 
 float Destructible::heal(float amount) {
 	hp += amount;
@@ -34,14 +40,15 @@ void Destructible::die(Actor *owner) {
 	engine.sendToBack(owner);
 }
 
-MonsterDestructible::MonsterDestructible(float maxHp, float defense, const char *corpseName) : Destructible(maxHp, defense, corpseName, MONSTER) {}
+MonsterDestructible::MonsterDestructible(float maxHp, float defense, const char *corpseName, int xp) : Destructible(maxHp, defense, corpseName, xp) {}
 
 void MonsterDestructible::die(Actor *owner) {
-	engine.gui->message(TCODColor::lightGrey, "%s is dead", owner->name);
+	engine.gui->message(TCODColor::lightGrey, "%s is dead. You gain %d xp", owner->name, xp);
+	engine.player->destructible->xp += xp;
 	Destructible::die(owner);
 }
 
-PlayerDestructible::PlayerDestructible(float maxHp, float defense, const char *corpseName) : Destructible(maxHp, defense, corpseName, PLAYER) {}
+PlayerDestructible::PlayerDestructible(float maxHp, float defense, const char *corpseName) : Destructible(maxHp, defense, corpseName, 0) {}
 
 void PlayerDestructible::die(Actor *owner) {
 	engine.gui->message(TCODColor::red, "You Died!");

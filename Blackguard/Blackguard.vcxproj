@@ -69,9 +69,9 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\libtcod\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\libtcod\lib;$(LibraryPath)</LibraryPath>
-    <SourcePath>C:\libtcod\src;$(SourcePath)</SourcePath>
+    <IncludePath>C:\libtcod\include;D:\libtcod\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\libtcod\lib;D:\libtcod\lib;$(LibraryPath)</LibraryPath>
+    <SourcePath>C:\libtcod\src;D:\libtcod\src;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>C:\libtcod\include;$(IncludePath)</IncludePath>
@@ -85,7 +85,7 @@
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>C:\libtcod;C:\libtcod\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\libtcod;C:\libtcod\lib;D:\libtcod;D:\libtcod\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>libtcod-VS.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -138,7 +138,7 @@
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="Actor.cpp" />
     <ClCompile Include="Pickable.cpp" />
-    <ClCompile Include="Serializable.cpp" />
+    <ClCompile Include="Persistent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h" />
@@ -152,7 +152,7 @@
     <ClInclude Include="Main.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Pickable.h" />
-    <ClInclude Include="Serializable.h" />
+    <ClInclude Include="Persistent.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
