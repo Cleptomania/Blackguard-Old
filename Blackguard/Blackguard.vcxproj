@@ -130,6 +130,7 @@
   <ItemGroup>
     <ClCompile Include="Ai.cpp" />
     <ClCompile Include="Attacker.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Container.cpp" />
     <ClCompile Include="Destructible.cpp" />
     <ClCompile Include="Engine.cpp" />
@@ -144,6 +145,7 @@
     <ClInclude Include="Actor.h" />
     <ClInclude Include="Ai.h" />
     <ClInclude Include="Attacker.h" />
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="Container.h" />
     <ClInclude Include="Destructible.h" />
     <ClInclude Include="Engine.h" />

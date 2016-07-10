@@ -209,8 +209,8 @@ void Map::render() {
 	dy = noise->get(&tdx) * 1.5f;
 	di = 0.2f * noise->get(&torchx);
 
-	for (int x = 0; x < width; x++) {
-		for (int y = 0; y < height; y++) {
+	for (int x = engine.cam->x; x < engine.cam->x2; x++) {
+		for (int y = engine.cam->y; y < engine.cam->y2; y++) {
 			bool visible = isInFov(x, y);
 			bool explored = isExplored(x, y);
 			bool wall = isWall(x, y);

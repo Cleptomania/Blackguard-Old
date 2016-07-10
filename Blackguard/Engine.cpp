@@ -18,11 +18,12 @@ void Engine::init() {
 	player->ai = new PlayerAi();
 	player->container = new Container(26);
 	actors.push(player);
+	cam = new Camera(screenWidth, screenWidth - 7, player->x - (screenWidth / 2), player->y - (screenHeight / 2));
 	stairs = new Actor(0, 0, '>', "stairs", TCODColor::white);
 	stairs->blocks = false;
 	stairs->fovOnly = false;
 	actors.push(stairs);
-	map = new Map(160, 93);
+	map = new Map(screenWidth * 3, screenHeight * 3);
 	map->init(true);
 	gui->message(TCODColor::red, "Welcome to Blackguard!\nGreat treasure awaits you in the dungeons ahead.");
 	gameStatus = STARTUP;
@@ -61,6 +62,13 @@ bool Engine::pickATile(int *x, int *y, float maxRange) {
 		TCODConsole::flush();
 	}
 	return false;
+}
+
+bool Engine::isInCamera(Actor *actor) {
+	if (actor->x >= cam->x && actor->x <= cam->x2 && actor->y >= cam->y && actor->y <= cam->y2)
+		return true;
+	else
+		return false;
 }
 
 Actor *Engine::getActor(int x, int y) const {
@@ -120,6 +128,12 @@ void Engine::update() {
 		load(true);
 	}
 	player->update();
+	int ncx = player->x - (screenWidth / 2);
+	int ncy = player->y - (screenHeight / 2);
+	if (ncx < 0) ncx = 0;
+	if (ncy < 0) ncy = 0;
+	if (ncx + cam->width > map->width) ncx = map->width;
+	if (ncx + cam->height > map->height) ncx = map->height;
 	if (gameStatus == NEW_TURN) {
 		for (Actor **iterator = actors.begin(); iterator != actors.end(); iterator++) {
 			Actor *actor = *iterator;
@@ -136,9 +150,10 @@ void Engine::render() {
 
 	for (Actor **iterator = actors.begin(); iterator != actors.end(); iterator++) {
 		Actor *actor = *iterator;
-		if (!actor->fovOnly && map->isExplored(actor->x, actor->y) || map->isInFov(actor->x, actor->y)) {
-			actor->render();
-		}
+		if (isInCamera(actor))
+			if (!actor->fovOnly && map->isExplored(actor->x, actor->y) || map->isInFov(actor->x, actor->y)) {
+				actor->render();
+			}
 	}
 	gui->render();
 }

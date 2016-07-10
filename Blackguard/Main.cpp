@@ -1,7 +1,7 @@
 #include "libtcod.hpp"
 #include "Engine.h"
 
-Engine engine(160, 100);
+Engine engine(80, 50);
 
 int main() {
 	engine.load(false);

@@ -9,4 +9,5 @@
 #include "Actor.h"
 #include "Map.h"
 #include "Gui.h"
+#include "Camera.h"
 #include "Engine.h"

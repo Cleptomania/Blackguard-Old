@@ -36,8 +36,8 @@ Menu::MenuItemCode Menu::pick(DisplayMode mode) {
 		menux += 2;
 		menuy += 3;
 	} else if (mode == MAIN) {
-		static TCODImage img("menu_background.png");
-		img.blit2x(TCODConsole::root, 0, 0);
+		//static TCODImage img("menu_background.png");
+		//img.blit2x(TCODConsole::root, 0, 0);
 		menux = 10;
 		menuy = TCODConsole::root->getHeight() / 3;
 	}
